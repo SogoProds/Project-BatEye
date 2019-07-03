@@ -71,7 +71,7 @@ void loop()
 {
   // measure the ping time in cm
   cmFront = (0.01723 * readUltrasonicDistance(6, 7)) - 10;// It is minus 10 cm because the front end of the prototype is 10 cm in front of the ultrasonic sensor.
-  cmBack = (0.01723 * readUltrasonicDistance(8,9 )) - 15;// Its is minus 15 cm because the back end of the prototype is 10 cm behind the ultrasonic sensor.
+  cmBack = (0.01723 * readUltrasonicDistance(8,9 )) - 15;// It is minus 15 cm because the back end of the prototype is 10 cm behind the ultrasonic sensor.
  
   // setting up the display setings.
   lcd.setCursor(0,0);
