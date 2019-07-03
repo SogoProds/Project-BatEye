@@ -1,28 +1,47 @@
 /*
-  Ping))) Sensor
+  LiquidCrystal Library - Hello World
 
-  This sketch reads a PING))) ultrasonic
-  rangefinder and returns the distance to the
-  closest object in range. To do this, it sends a
-  pulse to the sensor to initiate a reading, then
-  listens for a pulse to return.  The length of
-  the returning pulse is proportional to the
-  distance of the object from the sensor.
+ Demonstrates the use a 16x2 LCD display.  The LiquidCrystal
+ library works with all LCD displays that are compatible with the
+ Hitachi HD44780 driver. There are many of them out there, and you
+ can usually tell them by the 16-pin interface.
+
+ This sketch prints "Hello World!" to the LCD
+ and shows the time.
 
   The circuit:
-   * +V connection of the PING))) attached to +5V
-   * GND connection attached to ground
-   * SIG connection attached to digital pin 7
+ * LCD RS pin to digital pin 12
+ * LCD Enable pin to digital pin 11
+ * LCD D4 pin to digital pin 5
+ * LCD D5 pin to digital pin 4
+ * LCD D6 pin to digital pin 3
+ * LCD D7 pin to digital pin 2
+ * LCD R/W pin to ground
+ * LCD VSS pin to ground
+ * LCD VCC pin to 5V
+ * 10K resistor:
+ * ends to +5V and ground
+ * wiper to LCD VO pin (pin 3)
 
-  http://www.arduino.cc/en/Tutorial/Ping
+ Library originally added 18 Apr 2008
+ by David A. Mellis
+ library modified 5 Jul 2009
+ by Limor Fried (http://www.ladyada.net)
+ example added 9 Jul 2009
+ by Tom Igoe
+ modified 22 Nov 2010
+ by Tom Igoe
 
-  This example code is in the public domain.
-*/
-#include <Wire.h>
-#include<LCD.h>
-#include <LiquidCrystal_I2C.h>
-LiquidCrystal_I2C lcd1(0x3F,2,1,0,4,5,6,7,3,POSITIVE);
-//LiquidCrystal_I2C lcd1(0x3F, 16,2);
+ This example code is in the public domain.
+
+ http://www.arduino.cc/en/Tutorial/LiquidCrystal
+ */
+
+// include the library code:
+#include <LiquidCrystal.h>
+
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 int cmFront = 0;
 int cmBack = 0;
@@ -41,19 +60,10 @@ long readUltrasonicDistance(int triggerPin, int echoPin)
   return pulseIn(echoPin, HIGH);
 }
 
-
-
- // LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-
 void setup()
 {
   Serial.begin(9600);
-  lcd1.begin(16,2);
-  lcd1.backlight();
-  
-//  lcd.begin(16, 2);
- // lcd.print(cm);
-  
+  lcd.begin(16,2);
   pinMode(6, OUTPUT);
   pinMode(5, OUTPUT);
 }
@@ -62,45 +72,51 @@ void loop()
 {
   // measure the ping time in cm
   cmFront = (0.01723 * readUltrasonicDistance(6, 7)) - 10;
-  cmBack = (0.01723 * readUltrasonicDistance(8,9 )) - 20;
+  cmBack = (0.01723 * readUltrasonicDistance(8,9 )) - 10;
  
-  lcd1.setCursor(0,0);
-  lcd1.print("Front: ");
-  lcd1.print(cmFront); 
-  lcd1.print("            ");
+  lcd.setCursor(0,0);
+  lcd.print("Front:");
+  lcd.print(cmFront); 
+  lcd.print("              ");
 
-  lcd1.setCursor(0,1);
-  lcd1.print("Back: ");
-  lcd1.print(cmBack); 
-  lcd1.print("            ");
+  lcd.setCursor(0,1);
+  lcd.print("Back:");
+  lcd.print(cmBack);
+  lcd.print("              ");
 
   if(cmFront > 50 && cmBack > 50)
   {
-      noTone(5);
+      noTone(10);
       Serial.print(cmFront);
       Serial.print(" - ");
       Serial.println(cmBack);
   }
   else
   {
-    if((cmFront > 20 && cmFront<=50)|| (cmBack > 20 && cmBack<=50))
+    if(cmFront >= 20 && cmFront <=50)
     {
-      tone(5, 300, 70);
+      lcd.setCursor(8,0);
+      lcd.print("Caution!");
+      tone(10, 300, 100);
     }
-    if(cmFront < 20 || cmBack < 20)
+    if(cmBack >= 20 && cmBack <= 50)
     {
-      tone(5, 600, 30);
+      lcd.setCursor(8,1);
+      lcd.print("Caution!");
+      tone(10, 300, 100);
+    }
+    if(cmFront < 20)
+    {
+      lcd.setCursor(8,0);
+      lcd.print("! STOP !");
+      tone(10, 600, 10);
+    }
+    if(cmBack < 20)
+    {
+      lcd.setCursor(8,1);
+      lcd.print("! STOP !");
+      tone(10, 600, 10);
     } 
   }
-
-
-  /*
-  
- 
-*/
-  //  lcd.print(cm);
-    
-  
-  delay(100);
- // lcd.clear();
+  delay(250);
 }
