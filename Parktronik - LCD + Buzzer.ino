@@ -42,7 +42,6 @@
 
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-
 int cmFront = 0;
 int cmBack = 0;
 
@@ -71,9 +70,10 @@ void setup()
 void loop()
 {
   // measure the ping time in cm
-  cmFront = (0.01723 * readUltrasonicDistance(6, 7)) - 10;
-  cmBack = (0.01723 * readUltrasonicDistance(8,9 )) - 10;
+  cmFront = (0.01723 * readUltrasonicDistance(6, 7)) - 10;// It is minus 10 cm because the front end of the prototype is 10 cm in front of the ultrasonic sensor.
+  cmBack = (0.01723 * readUltrasonicDistance(8,9 )) - 15;// Its is minus 15 cm because the back end of the prototype is 10 cm behind the ultrasonic sensor.
  
+  // setting up the display setings.
   lcd.setCursor(0,0);
   lcd.print("Front:");
   lcd.print(cmFront); 
@@ -84,6 +84,7 @@ void loop()
   lcd.print(cmBack);
   lcd.print("              ");
 
+  // checks if you are far from an object on the both sides.
   if(cmFront > 50 && cmBack > 50)
   {
       noTone(10);
@@ -93,29 +94,29 @@ void loop()
   }
   else
   {
-    if(cmFront >= 20 && cmFront <=50)
+    if(cmFront >= 20 && cmFront <=50)   // checks if you are closer to an object in front.
     {
       lcd.setCursor(8,0);
-      lcd.print("Caution!");
-      tone(10, 300, 100);
+      lcd.print("Caution!");    // a message that should grab your attention because you are not so far from an object.
+      tone(10, 300, 100);   // sound that should orientate you about the distance between the  prototype and an object if you havent or are unable to see the display.
     }
-    if(cmBack >= 20 && cmBack <= 50)
+    if(cmBack >= 20 && cmBack <= 50)  // checks if you are closer to an object behind.
     {
       lcd.setCursor(8,1);
-      lcd.print("Caution!");
-      tone(10, 300, 100);
+      lcd.print("Caution!");    // a message that should grab your attention because you are not so far from an object.
+      tone(10, 300, 100);   // sound that should orientate you about the distance between the  prototype and an object if you havent or are unable to see the display.
     }
-    if(cmFront < 20)
+    if(cmFront < 20)  // checks if you are way too close to an object in front.
     {
-      lcd.setCursor(8,0);
-      lcd.print("! STOP !");
-      tone(10, 600, 10);
+      lcd.setCursor(8,0);   // sets where the message should be displayed on the lcd.
+      lcd.print("! STOP !");    // writes the message to let you know that you are too close.
+      tone(10, 600, 10);    // this is the annoying sound that should let you know that you are too close if you havent seen the display.
     }
-    if(cmBack < 20)
+    if(cmBack < 20) // checks if you are way too close to an object behind.
     {
-      lcd.setCursor(8,1);
-      lcd.print("! STOP !");
-      tone(10, 600, 10);
+      lcd.setCursor(8,1);   // sets where the message should be displayed on the lcd.
+      lcd.print("! STOP !");    // writes the message to let you know that you are too close.
+      tone(10, 600, 10);    // this is the annoying sound that should let you know that you are too close if you havent seen the display.
     } 
   }
   delay(250);
