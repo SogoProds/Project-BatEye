@@ -1,14 +1,12 @@
+//comment that came with original code; has valuable information about the wiring between the Arduino and the LCD
 /*
   LiquidCrystal Library - Hello World
-
  Demonstrates the use a 16x2 LCD display.  The LiquidCrystal
  library works with all LCD displays that are compatible with the
  Hitachi HD44780 driver. There are many of them out there, and you
  can usually tell them by the 16-pin interface.
-
  This sketch prints "Hello World!" to the LCD
  and shows the time.
-
   The circuit:
  * LCD RS pin to digital pin 12
  * LCD Enable pin to digital pin 11
@@ -22,7 +20,6 @@
  * 10K resistor:
  * ends to +5V and ground
  * wiper to LCD VO pin (pin 3)
-
  Library originally added 18 Apr 2008
  by David A. Mellis
  library modified 5 Jul 2009
@@ -31,9 +28,7 @@
  by Tom Igoe
  modified 22 Nov 2010
  by Tom Igoe
-
  This example code is in the public domain.
-
  http://www.arduino.cc/en/Tutorial/LiquidCrystal
  */
 
@@ -42,10 +37,11 @@
 
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-
+// two variables used to store information about the distance
 int cmFront = 0;
 int cmBack = 0;
 
+//function which translates sensor pings to useful data
 long readUltrasonicDistance(int triggerPin, int echoPin)
 {
   pinMode(triggerPin, OUTPUT);  // Clear the trigger
@@ -60,6 +56,7 @@ long readUltrasonicDistance(int triggerPin, int echoPin)
   return pulseIn(echoPin, HIGH);
 }
 
+//initial settings
 void setup()
 {
   Serial.begin(9600);
@@ -68,12 +65,14 @@ void setup()
   pinMode(5, OUTPUT);
 }
 
-void loop()
+//main loop; this is where the magic happens
+void loop()  
 {
   // measure the ping time in cm
-  cmFront = (0.01723 * readUltrasonicDistance(6, 7)) - 10;
-  cmBack = (0.01723 * readUltrasonicDistance(8,9 )) - 13;
+  cmFront = (0.01723 * readUltrasonicDistance(6, 7)) - 10;// It is minus 10 cm because the front end of the prototype sticks out 10 cm in front of the ultrasonic sensor.
+  cmBack = (0.01723 * readUltrasonicDistance(8,9 )) - 10;// It is minus 10 cm because the back end of the prototype sticks out 10 cm behind the ultrasonic sensor.
  
+  // setting up the display setings.
   lcd.setCursor(0,0);
   lcd.print("Front:");
   lcd.print(cmFront); 
@@ -84,6 +83,7 @@ void loop()
   lcd.print(cmBack);
   lcd.print("              ");
 
+  // main 'if'; no sound if the distance is greater than 50 cm
   if(cmFront > 50 && cmBack > 50)
   {
       noTone(10);
@@ -93,30 +93,30 @@ void loop()
   }
   else
   {
-    if(cmFront >= 20 && cmFront <=50)
+    if(cmFront >= 20 && cmFront <=50)   // checks if you are closer to an object in front.
     {
-      lcd.setCursor(8,0);
-      lcd.print("Caution!");
-      tone(10, 300, 100);
+      lcd.setCursor(8,0);     // sets where the message should be displayed on the lcd.
+      lcd.print("Caution!");    // a message that should grab your attention because you are not so far from an object.
+      tone(10, 300, 100);   // sound that should alert you that the distance between the prototype and an object is getting smaller.
     }
-    if(cmBack >= 20 && cmBack <= 50)
+    if(cmBack >= 20 && cmBack <= 50)  // checks if you are closer to an object behind.
     {
-      lcd.setCursor(8,1);
-      lcd.print("Caution!");
-      tone(10, 300, 100);
+      lcd.setCursor(8,1);    // sets where the message should be displayed on the lcd.
+      lcd.print("Caution!");    // a message that should grab your attention because you are not so far from an object.
+      tone(10, 300, 100);   // sound that should alert you that the distance between the prototype and an object is getting smaller.
     }
-    if(cmFront < 20)
+    if(cmFront < 20)  // checks if you are way too close to an object in front.
     {
-      lcd.setCursor(8,0);
-      lcd.print("! STOP !");
-      tone(10, 600, 10);
+      lcd.setCursor(8,0);   // sets where the message should be displayed on the lcd.
+      lcd.print("! STOP !");    // writes the message to let you know that you are too close.
+      tone(10, 600, 10);    // louder sound that should alert you that the distance between the prototype and an object is getting critically small.
     }
-    if(cmBack < 20)
+    if(cmBack < 20) // checks if you are way too close to an object behind.
     {
-      lcd.setCursor(8,1);
-      lcd.print("! STOP !");
-      tone(10, 600, 10);
+      lcd.setCursor(8,1);   // sets where the message should be displayed on the lcd.
+      lcd.print("! STOP !");    // writes the message to let you know that you are too close.
+      tone(10, 600, 10);    // louder sound that should alert you that the distance between the prototype and an object is getting critically small.
     } 
   }
-  delay(250);
+  delay(250); // the interval between pings
 }
