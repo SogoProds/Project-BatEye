@@ -72,7 +72,7 @@ void loop()
 {
   // measure the ping time in cm
   cmFront = (0.01723 * readUltrasonicDistance(6, 7)) - 10;
-  cmBack = (0.01723 * readUltrasonicDistance(8,9 )) - 10;
+  cmBack = (0.01723 * readUltrasonicDistance(8,9 )) - 13;
  
   lcd.setCursor(0,0);
   lcd.print("Front:");
